@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:web_socket_channel/io.dart';
 
 part 'websocket_event.dart';
+
 part 'websocket_state.dart';
 
 class WebSocketBloc extends Bloc<SocketEvent, WebsocketState> {
@@ -25,16 +26,22 @@ class WebSocketBloc extends Bloc<SocketEvent, WebsocketState> {
 
   WebSocketBloc({
     required this.internetConnectivityCubit,
-  }) : super(WebsocketStateInitial()) {
+  }) : super(WebsocketInitialState()) {
     addInternetSubscription();
 
-    on<SocketOnMessage>((event, emit) {
-      log("SocketConnect ${event.data}");
+    on<SocketOnMessageEvent>((event, emit) {
+      // log("SocketConnect ${event.data}");
+      emit(WebsocketMessageState(data: event.data));
     });
 
     on<SocketErrorEvent>((event, emit) {
       log("WebsocketStateDisconnected ${event.data}");
-      emit(WebsocketStateDisconnected());
+      emit(WebsocketDisconnectedState());
+    });
+
+    on<SocketOnDoneEvent>((event, emit) {
+      log("WebsocketStateDisconnected ${event.data}");
+      emit(WebsocketDoneState());
     });
   }
 
@@ -65,7 +72,7 @@ class WebSocketBloc extends Bloc<SocketEvent, WebsocketState> {
     _socket?.stream.listen(
       (message) {
         // log("WebSocketManager: Message {$message}");
-        add(SocketOnMessage(json.decode(message)));
+        add(SocketOnMessageEvent(json.decode(message)));
       },
       onDone: () {
         if (_socket?.closeCode != null ||
@@ -74,6 +81,7 @@ class WebSocketBloc extends Bloc<SocketEvent, WebsocketState> {
           log("WebSocketManager: closeCode ${_socket?.closeCode}}");
           _reloadWithDelay();
         }
+        add(const SocketOnDoneEvent(null));
         log("WebSocketManager: Done");
       },
       onError: (error) {

@@ -1,10 +1,22 @@
-import 'package:equatable/equatable.dart';
+part of 'currency_pair_list_bloc.dart';
 
-abstract class CurrencyPairListEvent extends Equatable {
+abstract class CurrencyPairEvent extends Equatable {
   @override
   List<Object?> get props => [];
 }
 
-class InitEvent extends CurrencyPairListEvent {}
+class CurrencyPairInitEvent extends CurrencyPairEvent {}
 
-class UpdateEvent extends CurrencyPairListEvent {}
+class CurrencyPairErrorEvent extends CurrencyPairEvent {
+  final String message;
+
+  CurrencyPairErrorEvent(this.message);
+}
+
+class CurrencyPairUpdatedEvent extends CurrencyPairEvent {
+  final List<CurrencyPair> pairs;
+
+  CurrencyPairUpdatedEvent({
+    required this.pairs,
+  });
+}

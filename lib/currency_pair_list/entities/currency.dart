@@ -11,22 +11,31 @@ class CurrencyPair extends Equatable {
   final String eventType;
   @JsonKey(name: "E")
   final DateTime eventTime;
-
-  // "e": "aggTrade",  // Event type
-  // "E": 123456789,   // Event time
-  // "s": "BNBBTC",    // Symbol
-  // "a": 12345,       // Aggregate trade ID
-  // "p": "0.001",     // Price
-  // "q": "100",       // Quantity
-  // "f": 100,         // First trade ID
-  // "l": 105,         // Last trade ID
-  // "T": 123456785,   // Trade time
-  // "m": true,        // Is the buyer the market maker?
-  // "M": true         // Ignore
+  @JsonKey(name: "s")
+  final String symbol;
+  @JsonKey(name: "c")
+  final String closePrice;
+  @JsonKey(name: "o")
+  final String openPrice;
+  @JsonKey(name: "h")
+  final String highPrice;
+  @JsonKey(name: "l")
+  final String lowPrice;
+  @JsonKey(name: "v")
+  final String totalTradedBaseAssetVolume;
+  @JsonKey(name: "q")
+  final String totalTradedQuoteAssetVolume;
 
   const CurrencyPair({
     required this.eventType,
     required this.eventTime,
+    required this.symbol,
+    required this.closePrice,
+    required this.openPrice,
+    required this.highPrice,
+    required this.lowPrice,
+    required this.totalTradedBaseAssetVolume,
+    required this.totalTradedQuoteAssetVolume,
   });
 
   factory CurrencyPair.fromJson(Map<String, dynamic> json) =>
@@ -35,5 +44,15 @@ class CurrencyPair extends Equatable {
   Map<String, dynamic> toJson() => _$CurrencyPairToJson(this);
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [
+        eventType,
+        eventTime,
+        symbol,
+        closePrice,
+        openPrice,
+        highPrice,
+        lowPrice,
+        totalTradedBaseAssetVolume,
+        totalTradedBaseAssetVolume,
+      ];
 }

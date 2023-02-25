@@ -66,7 +66,7 @@ class HomePage extends StatelessWidget {
       ),
       body: Stack(
         fit: StackFit.expand,
-        children: const [
+        children: [
           CurrencyPairListPage(),
           NoInternetConnection(),
         ],

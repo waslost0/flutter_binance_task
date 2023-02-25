@@ -1,18 +1,20 @@
 part of 'websocket_bloc.dart';
 
-abstract class WebsocketState extends Equatable {}
+abstract class WebsocketState extends Equatable {
+  final dynamic data;
 
-class WebsocketStateInitial extends WebsocketState {
+  const WebsocketState({this.data});
+
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [data];
 }
 
-class WebsocketStateConnected extends WebsocketState {
-  @override
-  List<Object?> get props => [];
+class WebsocketInitialState extends WebsocketState {}
+
+class WebsocketDisconnectedState extends WebsocketState {}
+
+class WebsocketMessageState extends WebsocketState {
+  const WebsocketMessageState({super.data});
 }
 
-class WebsocketStateDisconnected extends WebsocketState {
-  @override
-  List<Object?> get props => [];
-}
+class WebsocketDoneState extends WebsocketState {}

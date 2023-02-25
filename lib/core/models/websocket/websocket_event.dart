@@ -9,14 +9,14 @@ abstract class SocketEvent extends Equatable {
   List<Object?> get props => [data];
 }
 
-class SocketOnMessage extends SocketEvent {
-  const SocketOnMessage(super.data);
+class SocketOnMessageEvent extends SocketEvent {
+  const SocketOnMessageEvent(super.data);
 }
 
 class SocketErrorEvent extends SocketEvent {
   const SocketErrorEvent(super.data);
 }
 
-class SocketOnDone extends SocketEvent {
-  const SocketOnDone(super.data);
+class SocketOnDoneEvent extends SocketEvent {
+  const SocketOnDoneEvent(super.data);
 }

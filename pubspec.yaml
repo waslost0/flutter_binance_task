@@ -45,6 +45,7 @@ dependencies:
   json_annotation: ^4.8.0
   connectivity_plus: ^3.0.3
   web_socket_channel: ^2.3.0
+  collection: ^1.17.1
 
 dev_dependencies:
   flutter_test:

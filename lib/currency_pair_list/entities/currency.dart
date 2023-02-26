@@ -55,4 +55,7 @@ class CurrencyPair extends Equatable {
         totalTradedBaseAssetVolume,
         totalTradedBaseAssetVolume,
       ];
+
+  double get openPriceValue => double.tryParse(openPrice) ?? 0.0;
+  double get closePriceValue => double.tryParse(closePrice) ?? 0.0;
 }

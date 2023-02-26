@@ -2,16 +2,15 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:binance_task/core/models/websocket/websocket_bloc.dart';
+import 'package:binance_task/currency_pair_list/currency_pair_list_state.dart';
 import 'package:binance_task/currency_pair_list/entities/currency.dart';
-import 'package:bloc/bloc.dart';
-import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 part 'currency_pair_list_event.dart';
 
-part 'currency_pair_list_state.dart';
-
-class CurrencyPairListBloc extends Bloc<CurrencyPairEvent, CurrencyPairState> {
+class CurrencyPairListBloc
+    extends HydratedBloc<CurrencyPairEvent, CurrencyPairState> {
   final WebSocketBloc websocketBloc;
   late StreamSubscription websocketSubscription;
 
@@ -73,4 +72,13 @@ class CurrencyPairListBloc extends Bloc<CurrencyPairEvent, CurrencyPairState> {
     }
     return null;
   }
+
+  @override
+  CurrencyPairState? fromJson(Map<String, dynamic> json) =>
+      CurrencyPairState.fromJson(json['CurrencyPairState']);
+
+  @override
+  Map<String, dynamic>? toJson(CurrencyPairState state) => {
+        "CurrencyPairState": state.toJson(),
+      };
 }

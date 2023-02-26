@@ -5,11 +5,9 @@ import 'dart:developer';
 import 'package:binance_task/core/models/connectivity/connectivity_cubit.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:web_socket_channel/io.dart';
 
 part 'websocket_event.dart';
-
 part 'websocket_state.dart';
 
 class WebSocketBloc extends Bloc<SocketEvent, WebsocketState> {

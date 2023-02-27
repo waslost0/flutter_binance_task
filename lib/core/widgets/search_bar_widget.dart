@@ -3,11 +3,15 @@ import 'dart:async';
 import 'package:binance_task/app/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
+/// [SearchBarWidget]
+/// Simple search bar widget
 class SearchBarWidget extends StatefulWidget {
   final Function(String searchString) onSearch;
+  final Function()? onCancelTap;
 
   const SearchBarWidget({
     required this.onSearch,
+    this.onCancelTap,
     Key? key,
   }) : super(key: key);
 
@@ -15,6 +19,8 @@ class SearchBarWidget extends StatefulWidget {
   State<SearchBarWidget> createState() => _SearchBarWidgetState();
 }
 
+/// [build] - [PreferredSize]
+/// - [_buildSearchInputField]
 class _SearchBarWidgetState extends State<SearchBarWidget> {
   final TextEditingController searchController = TextEditingController();
   bool isSearchActive = false;
@@ -36,52 +42,20 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
   @override
   void initState() {
     super.initState();
-    inputFocus.addListener(() {
-      if (!inputFocus.hasFocus) {
-        onCancel();
-      } else {
-        onTap();
-      }
-    });
     searchController.addListener(() {
       _startReloadTimer();
     });
   }
 
-  Widget _buildSearchInputField(BuildContext context) {
-    return TextFormField(
-      focusNode: inputFocus,
-      onFieldSubmitted: onSubmitted,
-      controller: searchController,
-      maxLength: maxSearchStringLength,
-      style: AppTextStyle.body1.copyWith(
-        decorationColor: Colors.white,
-        height: 1.2,
-      ),
-      decoration: AppTheme.buildSearchInputDecoration().copyWith(
-        isDense: true,
-        hintText: searchHint,
-        hintStyle: AppTextStyle.body2.copyWith(
-          color: AppColors.hint,
-        ),
-        counterText: "",
-      ),
-    );
-  }
-
   @protected
   void onCancelTap() {
     searchController.text = "";
+    widget.onCancelTap?.call();
   }
 
   void onSearch(String searchString) {
     widget.onSearch.call(searchString.trim().toLowerCase());
   }
-
-  void onTap() {}
-
-  @protected
-  void onCancel() {}
 
   @protected
   void onSubmitted(String searchString) {}
@@ -103,6 +77,34 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
       child: Padding(
         padding: searchBarPadding,
         child: _buildSearchInputField(context),
+      ),
+    );
+  }
+
+  Widget _buildSearchInputField(BuildContext context) {
+    return TextFormField(
+      focusNode: inputFocus,
+      onFieldSubmitted: onSubmitted,
+      controller: searchController,
+      maxLength: maxSearchStringLength,
+      style: AppTextStyle.body1.copyWith(
+        decorationColor: Colors.white,
+        height: 1.2,
+      ),
+      decoration: AppTheme.buildSearchInputDecoration().copyWith(
+        isDense: true,
+        hintText: searchHint,
+        hintStyle: AppTextStyle.body2.copyWith(
+          color: AppColors.hint,
+        ),
+        suffixIcon: IconButton(
+          onPressed: onCancelTap,
+          icon: const Icon(
+            Icons.cancel_outlined,
+            color: AppColors.gray,
+          ),
+        ),
+        counterText: "",
       ),
     );
   }

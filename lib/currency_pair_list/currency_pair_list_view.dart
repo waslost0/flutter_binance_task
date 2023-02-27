@@ -1,5 +1,7 @@
-import 'package:binance_task/app/mixins/search_bar_mixin.dart';
+import 'package:binance_task/app/theme/app_theme.dart';
 import 'package:binance_task/core/blocs/connectivity/connectivity_cubit.dart';
+import 'package:binance_task/core/widgets/loading_indicator_widget.dart';
+import 'package:binance_task/core/widgets/search_bar_widget.dart';
 import 'package:binance_task/currency_pair_list/currency_pair_list_state.dart';
 import 'package:binance_task/currency_pair_list/widget/currency_pair_list_item.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +9,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'currency_pair_list_bloc.dart';
 
-// https://api4.binance.com/api/v3/ticker/24hr
-// todo load all currencies before update websocket
+/// https://api4.binance.com/api/v3/ticker/24hr
+/// TODO: load all currencies before update websocket
 class CurrencyPairListPage extends StatelessWidget {
   CurrencyPairListPage({super.key});
 
@@ -33,46 +35,102 @@ class CurrencyPairListPage extends StatelessWidget {
     bottom: 16,
   );
 
+  /// [_buildPage] boilerplate, with like BaseListBloc will disappear
+  ///
+  /// buildListItem instead
+  /// ```
+  /// @override
+  /// Widget buildListItem(int index) {
+  ///   var item = state.pairs[index];
+  ///   return CurrencyListItem(item: item);
+  /// }
+  /// ```
+  ///
+  /// For SearchBar some fixed list header/
+  ///
+  /// @override
+  /// Widget buildListHeader(BuildContext context) {
+  ///   final bloc = context.read<CurrencyPairListBloc>();
+  ///   return Padding(
+  ///     padding: const EdgeInsets.only(top: 15, bottom: 5),
+  ///     child: SearchBarWidget(
+  ///       onSearch: (searchString) {
+  ///         bloc.add(CurrencyPairFilterEvent(searchString: searchString));
+  ///       },
+  ///       onCancelTap: () {
+  ///         bloc.add(CurrencyPairFilterEvent(searchString: ""));
+  ///       },
+  ///     ),
+  ///   );
+  /// }
   Widget _buildPage(BuildContext context) {
     final bloc = context.read<CurrencyPairListBloc>();
     return SafeArea(
-      child: Column(
+      child: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 15, bottom: 5),
-            child: SearchBarWidget(
-              onSearch: (searchString) {
-                bloc.add(CurrencyPairFilterEvent(searchString: searchString));
-              },
-            ),
+          BlocBuilder<CurrencyPairListBloc, CurrencyPairState>(
+            bloc: bloc,
+            buildWhen: (previous, current) =>
+                previous != current && previous.status == PostStatus.initial,
+            builder: (context, state) {
+              if (state.status == PostStatus.initial) {
+                return const Center(child: LoadingIndicatorWidget());
+              }
+              return const SizedBox();
+            },
           ),
-          Expanded(
-            child: BlocBuilder<CurrencyPairListBloc, CurrencyPairState>(
-              bloc: bloc,
-              builder: (BuildContext context, CurrencyPairState state) {
-                if (state.status == PostStatus.success) {
-                  return ListView.separated(
-                    itemCount: state.pairs.length,
-                    controller: controller,
-                    itemBuilder: (BuildContext context, int index) {
-                      var item = state.pairs[index];
-                      return CurrencyListItem(item: item);
-                    },
-                    separatorBuilder: (BuildContext context, int index) {
-                      return const SizedBox(height: 20);
-                    },
-                    padding: listPadding,
-                  );
-                }
-                if (state.status == PostStatus.failure) {
-                  // TODO: error widget
-                }
-                return const Center(child: CircularProgressIndicator());
-              },
-            ),
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 15, bottom: 5),
+                child: SearchBarWidget(
+                  onSearch: (searchString) {
+                    bloc.add(
+                        CurrencyPairFilterEvent(searchString: searchString));
+                  },
+                  onCancelTap: () {
+                    bloc.add(CurrencyPairFilterEvent(searchString: ""));
+                  },
+                ),
+              ),
+              Expanded(
+                child: BlocBuilder<CurrencyPairListBloc, CurrencyPairState>(
+                  bloc: bloc,
+                  builder: (BuildContext context, CurrencyPairState state) {
+                    if (state.status == PostStatus.success) {
+                      if (state.pairs.isEmpty) {
+                        return const Center(
+                          child: Text("Empty list", style: AppTextStyle.title),
+                        );
+                      }
+                      return buildList(state);
+                    }
+                    if (state.status == PostStatus.failure) {
+                      // TODO: error widget
+                    }
+                    return const SizedBox();
+                  },
+                ),
+              ),
+            ],
           ),
         ],
       ),
+    );
+  }
+
+  Widget buildList(CurrencyPairState state) {
+    return ListView.separated(
+      itemCount: state.pairs.length,
+      controller: controller,
+      itemBuilder: (BuildContext context, int index) {
+        var item = state.pairs[index];
+        return CurrencyListItem(item: item);
+      },
+      separatorBuilder: (BuildContext context, int index) {
+        return const SizedBox(height: 20);
+      },
+      padding: listPadding,
     );
   }
 }

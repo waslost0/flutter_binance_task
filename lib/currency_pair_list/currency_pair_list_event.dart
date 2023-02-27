@@ -20,3 +20,11 @@ class CurrencyPairUpdatedEvent extends CurrencyPairEvent {
     required this.pairs,
   });
 }
+
+class CurrencyPairFilterEvent extends CurrencyPairEvent {
+  final String searchString;
+
+  CurrencyPairFilterEvent({
+    required this.searchString,
+  });
+}

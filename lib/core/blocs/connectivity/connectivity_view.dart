@@ -1,4 +1,4 @@
-import 'package:binance_task/core/models/connectivity/connectivity_cubit.dart';
+import 'package:binance_task/core/blocs/connectivity/connectivity_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

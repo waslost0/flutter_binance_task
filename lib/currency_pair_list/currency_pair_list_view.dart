@@ -1,7 +1,8 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:binance_task/core/models/websocket/websocket_bloc.dart';
+import 'package:binance_task/app/mixins/search_bar_mixin.dart';
+import 'package:binance_task/core/blocs/websocket/websocket_bloc.dart';
 import 'package:binance_task/currency_pair_list/currency_pair_list_state.dart';
 import 'package:binance_task/currency_pair_list/widget/currency_pair_list_item.dart';
 import 'package:flutter/material.dart';
@@ -38,28 +39,41 @@ class CurrencyPairListPage extends StatelessWidget {
   );
 
   Widget _buildPage(BuildContext context) {
-    final bloc = BlocProvider.of<CurrencyPairListBloc>(context);
-    return BlocBuilder<CurrencyPairListBloc, CurrencyPairState>(
-      bloc: bloc,
-      builder: (BuildContext context, CurrencyPairState state) {
-        if (state.status == PostStatus.success) {
-          return ListView.separated(
-            itemCount: state.pairs.length,
-            controller: controller,
-            addAutomaticKeepAlives: true,
-            itemBuilder: (BuildContext context, int index) {
-              var item = state.pairs[index];
-              return CurrencyListItem(item: item);
+    final bloc = context.read<CurrencyPairListBloc>();
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 30),
+          child: SearchBarWidget(
+            onSearch: (searchString) {
+              bloc.add(CurrencyPairFilterEvent(searchString: searchString));
             },
-            separatorBuilder: (BuildContext context, int index) {
-              return const SizedBox(height: 20);
+          ),
+        ),
+        Expanded(
+          child: BlocBuilder<CurrencyPairListBloc, CurrencyPairState>(
+            bloc: bloc,
+            builder: (BuildContext context, CurrencyPairState state) {
+              if (state.status == PostStatus.success) {
+                return ListView.separated(
+                  itemCount: state.pairs.length,
+                  controller: controller,
+                  itemBuilder: (BuildContext context, int index) {
+                    var item = state.pairs[index];
+                    return CurrencyListItem(item: item);
+                  },
+                  separatorBuilder: (BuildContext context, int index) {
+                    return const SizedBox(height: 20);
+                  },
+                  padding: listPadding,
+                );
+              }
+              if (state.status == PostStatus.failure) {}
+              return const Center(child: CircularProgressIndicator());
             },
-            padding: listPadding,
-          );
-        }
-        if (state.status == PostStatus.failure) {}
-        return const Center(child: CircularProgressIndicator());
-      },
+          ),
+        ),
+      ],
     );
   }
 }

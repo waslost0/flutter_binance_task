@@ -8,7 +8,8 @@ class AppBlocObserver extends BlocObserver {
   @override
   void onChange(BlocBase bloc, Change change) {
     if (kDebugMode) {
-      log('Changed: $change');
+      log('Changed: $bloc');
+      // log('Changed: $change');
     }
     super.onChange(bloc, change);
   }

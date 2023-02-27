@@ -1,5 +1,5 @@
 import 'package:binance_task/core/helpers/formatter.dart';
-import 'package:binance_task/core/models/theme/app_theme.dart';
+import 'package:binance_task/app/theme/app_theme.dart';
 import 'package:binance_task/core/widgets/card_widget.dart';
 import 'package:binance_task/currency_pair_list/entities/currency.dart';
 import 'package:flutter/material.dart';
@@ -112,7 +112,7 @@ class CurrencyListItem extends StatelessWidget {
 
   String get percentText {
     var value = percentValue;
-    return "${value > 0 ? "+" : ""} ${value.toStringAsFixed(2)} %";
+    return "${value > 0 ? "+" : "-"}${value.abs().toStringAsFixed(2)} %";
   }
 
   Color get percentColor {

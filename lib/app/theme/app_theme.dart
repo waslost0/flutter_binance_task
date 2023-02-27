@@ -5,6 +5,7 @@ abstract class AppColors {
   static const Color background = Color(0xFF212630);
   static const Color loadingIndicatorColor = primary;
   static const Color gray = Color(0xff989EA7);
+  static const Color greyLight = Color(0xFFF5F6F7);
   static const Color green = Color(0xFF2DBD85);
   static const Color red = Color(0xFFE44358);
   static const Color border = Color(0xFF989EA7);
@@ -12,6 +13,7 @@ abstract class AppColors {
   static const Color hint = Color(0xFF989EA7);
   static const Color text = Color(0xFFFFFFFF);
   static const Color lightText = Color(0xFF7A7D83);
+  static const Color searchbarBackground = Color(0xFF29303d);
   static const Color surfaceLightGray = Color(0xFFF7F8F9);
   static const Color white = Color(0xFFFFFFFF);
   static const Color black = Color(0xFF2F3234);
@@ -96,8 +98,7 @@ class AppTheme {
       primaryColor: AppColors.primary,
       scaffoldBackgroundColor: AppColors.background,
       textSelectionTheme: const TextSelectionThemeData(
-        cursorColor: AppColors.primary,
-        selectionHandleColor: AppColors.primary,
+        cursorColor: AppColors.white,
       ),
       colorScheme: ColorScheme.fromSwatch().copyWith(
         secondary: AppColors.primary,
@@ -155,4 +156,26 @@ class AppTheme {
         color: AppColors.surfaceLightGray,
         borderRadius: BorderRadius.circular(cardBorderRadius),
       );
+
+  static InputDecoration buildSearchInputDecoration() {
+    var border = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(20),
+      borderSide: const BorderSide(
+        width: 0,
+        color: Colors.transparent,
+      ),
+    );
+    return InputDecoration(
+      filled: true,
+      fillColor: AppColors.searchbarBackground,
+      border: border,
+      enabledBorder: border,
+      focusedBorder: border,
+      prefixIcon: const Icon(
+        Icons.search,
+        color: AppColors.hint,
+      ),
+      contentPadding: const EdgeInsets.only(right: 16, top: 12, bottom: 12),
+    );
+  }
 }

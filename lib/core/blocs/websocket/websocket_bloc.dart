@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:binance_task/core/models/connectivity/connectivity_cubit.dart';
+import 'package:binance_task/core/blocs/connectivity/connectivity_cubit.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:web_socket_channel/io.dart';
@@ -18,7 +18,6 @@ class WebSocketBloc extends Bloc<SocketEvent, WebsocketState> {
   InternetConnectivityCubit internetConnectivityCubit;
 
   Timer? _restartTimer;
-  Timer? _pingTimer;
 
   IOWebSocketChannel? _socket;
 
@@ -92,7 +91,6 @@ class WebSocketBloc extends Bloc<SocketEvent, WebsocketState> {
   }
 
   void stopSockets() {
-    _pingTimer?.cancel();
     _restartTimer?.cancel();
     if (_socket != null) {
       log("WebSocketManager: Closing");

@@ -2,7 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:binance_task/app/mixins/search_bar_mixin.dart';
-import 'package:binance_task/core/blocs/websocket/websocket_bloc.dart';
+import 'package:binance_task/core/blocs/connectivity/connectivity_cubit.dart';
 import 'package:binance_task/currency_pair_list/currency_pair_list_state.dart';
 import 'package:binance_task/currency_pair_list/widget/currency_pair_list_item.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +21,7 @@ class CurrencyPairListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) => CurrencyPairListBloc(
-        websocketBloc: context.read<WebSocketBloc>(),
+        internetConnectivityCubit: context.read<InternetConnectivityCubit>(),
       )..add(CurrencyPairInitEvent()),
       child: Builder(
         builder: (context) => _buildPage(context),

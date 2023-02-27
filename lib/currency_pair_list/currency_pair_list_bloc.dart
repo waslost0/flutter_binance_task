@@ -1,25 +1,30 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:binance_task/core/blocs/connectivity/connectivity_cubit.dart';
 import 'package:binance_task/core/blocs/websocket/websocket_bloc.dart';
 import 'package:binance_task/currency_pair_list/currency_pair_list_state.dart';
 import 'package:binance_task/currency_pair_list/entities/currency.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:bloc_concurrency/bloc_concurrency.dart';
 
 part 'currency_pair_list_event.dart';
 
 class CurrencyPairListBloc
     extends HydratedBloc<CurrencyPairEvent, CurrencyPairState> {
-  final WebSocketBloc websocketBloc;
-  late StreamSubscription websocketSubscription;
+  InternetConnectivityCubit internetConnectivityCubit;
+
+  late final WebSocketBloc websocketBloc = WebSocketBloc(
+    internetConnectivityCubit: internetConnectivityCubit,
+  );
+
   String? searchString;
 
-  CurrencyPairListBloc({required this.websocketBloc})
-      : super(const CurrencyPairState()) {
-    addWebsocketSubscription();
+  CurrencyPairListBloc({
+    required this.internetConnectivityCubit,
+  }) : super(const CurrencyPairState()) {
     on<CurrencyPairInitEvent>(_init);
     on<CurrencyPairUpdatedEvent>(_onCurrencyUpdate);
     on<CurrencyPairErrorEvent>(_onCurrencyError);
@@ -30,17 +35,14 @@ class CurrencyPairListBloc
     CurrencyPairInitEvent event,
     Emitter<CurrencyPairState> emit,
   ) async {
-    websocketBloc.startSockets();
-  }
-
-  void addWebsocketSubscription() {
-    websocketSubscription = websocketBloc.stream.listen((socketState) {
-      if (socketState is WebsocketMessageState) {
-        var data = parseWebsocketData((socketState).data);
+    websocketBloc.stream.listen((event) {
+      if (event is WebsocketMessageState) {
+        var data = parseWebsocketData((event).data);
         if (data == null) return;
         add(CurrencyPairUpdatedEvent(pairs: data));
       }
     });
+    websocketBloc.startSockets();
   }
 
   Future<void> _onCurrencyUpdate(
@@ -72,12 +74,6 @@ class CurrencyPairListBloc
   ) async {
     searchString = event.searchString.trim().toLowerCase();
     add(CurrencyPairUpdatedEvent(pairs: state.pairs));
-  }
-
-  @override
-  Future<void> close() {
-    websocketSubscription.cancel();
-    return super.close();
   }
 
   void filterCurrencyList(String searchString) {}

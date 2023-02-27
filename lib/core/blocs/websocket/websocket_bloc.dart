@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:binance_task/core/blocs/connectivity/connectivity_cubit.dart';
+import 'package:binance_task/core/constants/strings.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:web_socket_channel/io.dart';
@@ -10,53 +11,58 @@ import 'package:web_socket_channel/io.dart';
 part 'websocket_event.dart';
 part 'websocket_state.dart';
 
+/// [WebSocketBloc]
 class WebSocketBloc extends Bloc<SocketEvent, WebsocketState> {
-  static const String webSocketUrl = 'wss://stream.binance.com:9443/ws/';
-  static const String streamName = '!miniTicker@arr';
-
-  late StreamSubscription internetSubscription;
+  String streamName = '!miniTicker@arr';
   InternetConnectivityCubit internetConnectivityCubit;
-
   Timer? _restartTimer;
-
   IOWebSocketChannel? _socket;
 
   WebSocketBloc({
+    this.streamName = '!miniTicker@arr',
     required this.internetConnectivityCubit,
   }) : super(WebsocketInitialState()) {
     addInternetSubscription();
 
     on<SocketOnMessageEvent>((event, emit) {
-      // log("SocketConnect ${event.data}");
+      // log("WebSocketManager ${event.data}");
       emit(WebsocketMessageState(data: event.data));
     });
 
     on<SocketErrorEvent>((event, emit) {
-      log("WebsocketStateDisconnected ${event.data}");
+      log("WebSocketManager: WebsocketStateDisconnected ${event.data}");
       emit(WebsocketDisconnectedState());
     });
 
     on<SocketOnDoneEvent>((event, emit) {
-      log("WebsocketStateDisconnected ${event.data}");
+      log("WebSocketManager :WebsocketStateDisconnected ${event.data}");
       emit(WebsocketDoneState());
     });
   }
 
+  /// Reload [_socket] on internet connection restored
   void addInternetSubscription() {
-    internetSubscription = internetConnectivityCubit.stream.listen((event) {
+    internetConnectivityCubit.stream.listen((event) {
       if (event is ConnectivityResultState) {
-        if (event.connectivityResult == false) {
+        if (event.connectivityResult) {
           _reloadWithDelay();
         }
       }
     });
   }
 
+  /// Starts socket
+  /// On [Exception] or [_socket] error  try reload [_socket]
+  /// with delay [_reloadWithDelay]
   void startSockets() {
+    if (!(internetConnectivityCubit.state as ConnectivityResultState)
+        .connectivityResult) {
+      return;
+    }
     stopSockets();
     try {
       _socket = IOWebSocketChannel.connect(
-        "$webSocketUrl$streamName",
+        "${Strings.websocketUrl}$streamName",
         pingInterval: const Duration(seconds: 2),
       );
     } catch (e, s) {
@@ -90,6 +96,7 @@ class WebSocketBloc extends Bloc<SocketEvent, WebsocketState> {
     );
   }
 
+  /// Stop socket, reload timer
   void stopSockets() {
     _restartTimer?.cancel();
     if (_socket != null) {
@@ -100,6 +107,7 @@ class WebSocketBloc extends Bloc<SocketEvent, WebsocketState> {
     }
   }
 
+  /// Reload websocket with delay
   void _reloadWithDelay() {
     _restartTimer?.cancel();
     _restartTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {

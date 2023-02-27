@@ -26,10 +26,14 @@ class App extends StatelessWidget {
         home: Scaffold(
           body: SafeArea(
             child: Stack(
-              fit: StackFit.expand,
               children: [
                 CurrencyPairListPage(),
-                const NoInternetConnection(),
+                const Positioned(
+                  bottom: 0,
+                  left: 16,
+                  right: 16,
+                  child: NoInternetConnection(),
+                ),
               ],
             ),
           ),

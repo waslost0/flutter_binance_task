@@ -34,23 +34,25 @@ class NoInternetConnection extends StatelessWidget {
       duration: const Duration(milliseconds: 300),
       alignment: Alignment.topCenter,
       heightFactor: !value ? 1.0 : 0.0,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.red,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        margin: const EdgeInsets.all(16),
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            minHeight: 22,
-          ),
-          child: const Text(
-            Strings.noInternetConnection,
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-      ),
+      child: !value
+          ? Container(
+              decoration: BoxDecoration(
+                color: Colors.red,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              margin: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  minHeight: 22,
+                ),
+                child: const Text(
+                  Strings.noInternetConnection,
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            )
+          : const SizedBox(),
     );
   }
 }

@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.binance_task">
+    <uses-permission android:name="android.permission.INTERNET" />
    <application
         android:label="binance_task"
         android:name="${applicationName}"

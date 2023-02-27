@@ -20,7 +20,11 @@ class CurrencyPairListBloc
     internetConnectivityCubit: internetConnectivityCubit,
   );
 
-  String? searchString;
+  late StreamSubscription websocketSubscription;
+
+  List<CurrencyPair> allLoaded = [];
+
+  String searchString = "";
 
   CurrencyPairListBloc({
     required this.internetConnectivityCubit,
@@ -28,20 +32,22 @@ class CurrencyPairListBloc
     on<CurrencyPairInitEvent>(_init);
     on<CurrencyPairUpdatedEvent>(_onCurrencyUpdate);
     on<CurrencyPairErrorEvent>(_onCurrencyError);
-    on<CurrencyPairFilterEvent>(_filterCurrencyList, transformer: droppable());
+    on<CurrencyPairFilterEvent>(_onSearchCurrencyList,
+        transformer: droppable());
   }
 
   void _init(
     CurrencyPairInitEvent event,
     Emitter<CurrencyPairState> emit,
   ) async {
-    websocketBloc.stream.listen((event) {
-      if (event is WebsocketMessageState) {
-        var data = parseWebsocketData((event).data);
+    websocketSubscription = websocketBloc.stream.listen((socketState) {
+      if (socketState is WebsocketMessageState) {
+        var data = parseWebsocketData((socketState).data);
         if (data == null) return;
         add(CurrencyPairUpdatedEvent(pairs: data));
       }
     });
+    allLoaded = state.pairs;
     websocketBloc.startSockets();
   }
 
@@ -50,6 +56,12 @@ class CurrencyPairListBloc
     Emitter<CurrencyPairState> emit,
   ) async {
     try {
+      allLoaded = mergeCurrencyList(
+            allLoaded,
+            event.pairs,
+            shouldFilter: false,
+          ) ??
+          allLoaded;
       emit(
         state.copyWith(
           pairs: mergeCurrencyList(state.pairs, event.pairs),
@@ -68,42 +80,45 @@ class CurrencyPairListBloc
     emit(state.copyWith(status: PostStatus.failure));
   }
 
-  Future<void> _filterCurrencyList(
+  Future<void> _onSearchCurrencyList(
     CurrencyPairFilterEvent event,
     Emitter<CurrencyPairState> emit,
   ) async {
-    searchString = event.searchString.trim().toLowerCase();
-    add(CurrencyPairUpdatedEvent(pairs: state.pairs));
+    if (searchString == event.searchString) {
+      return;
+    }
+    add(CurrencyPairUpdatedEvent(pairs: allLoaded));
+    searchString = event.searchString;
   }
-
-  void filterCurrencyList(String searchString) {}
 
   List<CurrencyPair>? mergeCurrencyList(
     List<CurrencyPair> oldList,
-    List<CurrencyPair> newList,
-  ) {
-    if (searchString?.isNotEmpty ?? false) {
-      oldList = oldList
-          .where((e) => e.symbol.toLowerCase().contains(searchString!))
+    List<CurrencyPair> newList, {
+    bool shouldFilter = true,
+  }) {
+    if (searchString.isNotEmpty && shouldFilter) {
+      oldList = allLoaded
+          .where((e) => e.symbol.toLowerCase().contains(searchString))
           .toList();
       newList = newList
-          .where((e) => e.symbol.toLowerCase().contains(searchString!))
+          .where((e) => e.symbol.toLowerCase().contains(searchString))
           .toList();
+    } else {
+      oldList = allLoaded.toList();
     }
 
-    var list = oldList.toList();
-    if (newList.isEmpty) return list;
+    if (newList.isEmpty) return oldList;
     for (var item in newList) {
-      var oldItem = list.firstWhereOrNull((e) => e.symbol == item.symbol);
+      var oldItem = oldList.firstWhereOrNull((e) => e.symbol == item.symbol);
       if (oldItem != null) {
-        var index = list.indexWhere((e) => e.symbol == item.symbol);
+        var index = oldList.indexWhere((e) => e.symbol == item.symbol);
         if (index == -1) continue;
-        list[index] = item;
+        oldList[index] = item;
       } else {
-        list.add(item);
+        oldList.add(item);
       }
     }
-    return list;
+    return oldList;
   }
 
   List<CurrencyPair>? parseWebsocketData(dynamic data) {
@@ -114,6 +129,12 @@ class CurrencyPairListBloc
       log("$e\n$s");
     }
     return null;
+  }
+
+  @override
+  Future<void> close() {
+    websocketSubscription.cancel();
+    return super.close();
   }
 
   @override

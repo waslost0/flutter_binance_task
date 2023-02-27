@@ -54,6 +54,10 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
       onFieldSubmitted: onSubmitted,
       controller: searchController,
       maxLength: maxSearchStringLength,
+      style: AppTextStyle.body1.copyWith(
+        decorationColor: Colors.white,
+        height: 1.2,
+      ),
       decoration: AppTheme.buildSearchInputDecoration().copyWith(
         isDense: true,
         hintText: searchHint,
@@ -71,7 +75,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
   }
 
   void onSearch(String searchString) {
-    widget.onSearch.call(searchString);
+    widget.onSearch.call(searchString.trim().toLowerCase());
   }
 
   void onTap() {}

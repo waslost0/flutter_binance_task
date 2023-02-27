@@ -1,5 +1,5 @@
-import 'package:binance_task/core/helpers/formatter.dart';
 import 'package:binance_task/app/theme/app_theme.dart';
+import 'package:binance_task/core/helpers/formatter.dart';
 import 'package:binance_task/core/widgets/card_widget.dart';
 import 'package:binance_task/currency_pair_list/entities/currency.dart';
 import 'package:flutter/material.dart';
@@ -18,9 +18,9 @@ class CurrencyListItem extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Flexible(child: buildCurrencyTitleVolume()),
-        Flexible(child: buildValuePrice()),
-        Flexible(child: buildPercent()),
+        Expanded(child: buildCurrencyTitleVolume()),
+        Expanded(child: buildValuePrice()),
+        buildPercent(),
       ],
     );
   }
@@ -28,9 +28,9 @@ class CurrencyListItem extends StatelessWidget {
   Widget buildCurrencyTitleVolume() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         buildCurrencyTitle(),
+        const SizedBox(height: 5),
         buildVolume(),
       ],
     );
@@ -47,6 +47,7 @@ class CurrencyListItem extends StatelessWidget {
             fontWeight: FontWeight.w500,
           ),
         ),
+        const SizedBox(height: 10),
         buildPrice(),
       ],
     );
@@ -88,7 +89,7 @@ class CurrencyListItem extends StatelessWidget {
 
   Widget buildPercent() {
     return SizedBox(
-      width: 120,
+      width: 110,
       height: 45,
       child: CardWidget(
         color: percentColor,

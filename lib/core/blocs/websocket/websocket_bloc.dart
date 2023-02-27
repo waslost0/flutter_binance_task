@@ -6,7 +6,7 @@ import 'package:binance_task/core/blocs/connectivity/connectivity_cubit.dart';
 import 'package:binance_task/core/constants/strings.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 part 'websocket_event.dart';
 part 'websocket_state.dart';
@@ -16,7 +16,7 @@ class WebSocketBloc extends Bloc<SocketEvent, WebsocketState> {
   String streamName = '!miniTicker@arr';
   InternetConnectivityCubit internetConnectivityCubit;
   Timer? _restartTimer;
-  IOWebSocketChannel? _socket;
+  WebSocketChannel? _socket;
 
   WebSocketBloc({
     this.streamName = '!miniTicker@arr',
@@ -61,10 +61,9 @@ class WebSocketBloc extends Bloc<SocketEvent, WebsocketState> {
     }
     stopSockets();
     try {
-      _socket = IOWebSocketChannel.connect(
+      _socket = WebSocketChannel.connect(Uri.parse(
         "${Strings.websocketUrl}$streamName",
-        pingInterval: const Duration(seconds: 2),
-      );
+      ));
     } catch (e, s) {
       log("WebSocketManager: in catch block error: = $e");
       log("WebSocketManager: Error ${s.toString()}");

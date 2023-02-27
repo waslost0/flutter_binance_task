@@ -27,7 +27,7 @@ class CurrencyPairListPage extends StatelessWidget {
   }
 
   final EdgeInsets listPadding = const EdgeInsets.only(
-    top: 30,
+    top: 10,
     left: 20,
     right: 20,
     bottom: 16,
@@ -39,7 +39,7 @@ class CurrencyPairListPage extends StatelessWidget {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 30),
+            padding: const EdgeInsets.only(top: 15, bottom: 5),
             child: SearchBarWidget(
               onSearch: (searchString) {
                 bloc.add(CurrencyPairFilterEvent(searchString: searchString));
@@ -64,7 +64,9 @@ class CurrencyPairListPage extends StatelessWidget {
                     padding: listPadding,
                   );
                 }
-                if (state.status == PostStatus.failure) {}
+                if (state.status == PostStatus.failure) {
+                  // TODO: error widget
+                }
                 return const Center(child: CircularProgressIndicator());
               },
             ),

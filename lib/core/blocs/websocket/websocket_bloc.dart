@@ -12,6 +12,7 @@ part 'websocket_event.dart';
 part 'websocket_state.dart';
 
 /// [WebSocketBloc]
+/// TODO stop websocket on app pause
 class WebSocketBloc extends Bloc<SocketEvent, WebsocketState> {
   String streamName = '!miniTicker@arr';
   InternetConnectivityCubit internetConnectivityCubit;

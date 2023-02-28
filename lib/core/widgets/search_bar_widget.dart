@@ -92,16 +92,21 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
         height: 1.2,
       ),
       decoration: AppTheme.buildSearchInputDecoration().copyWith(
-        isDense: true,
         hintText: searchHint,
         hintStyle: AppTextStyle.body2.copyWith(
-          color: AppColors.hint,
+          color: AppColors.lightGray,
+        ),
+        isDense: true,
+        suffixIconConstraints: const BoxConstraints(
+          maxHeight: 45,
         ),
         suffixIcon: IconButton(
+          padding: EdgeInsets.zero,
+          splashRadius: 15,
           onPressed: onCancelTap,
           icon: const Icon(
             Icons.cancel_outlined,
-            color: AppColors.gray,
+            color: AppColors.lightGray,
           ),
         ),
         counterText: "",

@@ -1,9 +1,13 @@
 import 'package:binance_task/app/theme/app_theme.dart';
 import 'package:binance_task/core/helpers/formatter.dart';
-import 'package:binance_task/core/widgets/card_widget.dart';
 import 'package:binance_task/currency_pair_list/entities/currency.dart';
 import 'package:flutter/material.dart';
 
+/// [CurrencyListItem]
+/// [Row]
+/// - [buildCurrencyTitleVolume] - Currency pair name and value
+/// - [buildValuePrice] - Value and open price (not sure what is top value must be)
+/// - [buildPercent] - Percent open close price calculated
 class CurrencyListItem extends StatelessWidget {
   final CurrencyPair item;
 
@@ -88,19 +92,18 @@ class CurrencyListItem extends StatelessWidget {
   }
 
   Widget buildPercent() {
-    return SizedBox(
-      width: 110,
-      height: 45,
-      child: CardWidget(
-        color: percentColor,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 13),
-        margin: EdgeInsets.zero,
-        child: Center(
-          child: Text(
-            percentText,
-            style: AppTextStyle.title1.copyWith(
-              color: AppColors.white,
-            ),
+    return Card(
+      color: percentColor,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+      margin: EdgeInsets.zero,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+        alignment: Alignment.center,
+        constraints: const BoxConstraints(minWidth: 105),
+        child: Text(
+          percentText,
+          style: AppTextStyle.title1.copyWith(
+            color: AppColors.white,
           ),
         ),
       ),

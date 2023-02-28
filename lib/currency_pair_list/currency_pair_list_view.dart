@@ -1,5 +1,5 @@
 import 'package:binance_task/app/theme/app_theme.dart';
-import 'package:binance_task/core/blocs/connectivity/connectivity_cubit.dart';
+import 'package:binance_task/core/blocs/websocket/websocket_bloc.dart';
 import 'package:binance_task/core/widgets/loading_indicator_widget.dart';
 import 'package:binance_task/core/widgets/search_bar_widget.dart';
 import 'package:binance_task/currency_pair_list/currency_pair_list_state.dart';
@@ -9,8 +9,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'currency_pair_list_bloc.dart';
 
-/// https://api4.binance.com/api/v3/ticker/24hr
-/// TODO: load all currencies before update websocket
+/// [build] - [CurrencyPairListBloc]
+/// - [_buildPage]
+/// - - [LoadingIndicatorWidget]
+/// - - [SearchBarWidget]
+/// - - [buildList] - ListView
+/// - - - [CurrencyListItem]
 class CurrencyPairListPage extends StatelessWidget {
   CurrencyPairListPage({super.key});
 
@@ -20,7 +24,7 @@ class CurrencyPairListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) => CurrencyPairListBloc(
-        internetConnectivityCubit: context.read<InternetConnectivityCubit>(),
+        websocketBloc: context.read<WebSocketBloc>(),
       )..add(CurrencyPairInitEvent()),
       child: Builder(
         builder: (context) => _buildPage(context),
@@ -29,13 +33,13 @@ class CurrencyPairListPage extends StatelessWidget {
   }
 
   final EdgeInsets listPadding = const EdgeInsets.only(
-    top: 10,
+    top: 20,
     left: 20,
     right: 20,
     bottom: 16,
   );
 
-  /// [_buildPage] boilerplate, with like BaseListBloc will disappear
+  /// [_buildPage] boilerplate, with like BaseListView will disappear
   ///
   /// buildListItem instead
   /// ```
@@ -82,11 +86,12 @@ class CurrencyPairListPage extends StatelessWidget {
           Column(
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 15, bottom: 5),
+                padding: const EdgeInsets.only(top: 15, bottom: 20),
                 child: SearchBarWidget(
                   onSearch: (searchString) {
                     bloc.add(
-                        CurrencyPairFilterEvent(searchString: searchString));
+                      CurrencyPairFilterEvent(searchString: searchString),
+                    );
                   },
                   onCancelTap: () {
                     bloc.add(CurrencyPairFilterEvent(searchString: ""));

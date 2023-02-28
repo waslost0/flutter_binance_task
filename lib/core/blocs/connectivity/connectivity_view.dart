@@ -1,3 +1,4 @@
+import 'package:binance_task/app/theme/app_theme.dart';
 import 'package:binance_task/core/blocs/connectivity/connectivity_cubit.dart';
 import 'package:binance_task/core/constants/strings.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +38,7 @@ class NoInternetConnection extends StatelessWidget {
       child: !value
           ? Container(
               decoration: BoxDecoration(
-                color: Colors.red,
+                color: AppColors.red,
                 borderRadius: BorderRadius.circular(16),
               ),
               margin: const EdgeInsets.all(16),

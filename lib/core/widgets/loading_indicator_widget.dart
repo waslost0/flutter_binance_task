@@ -1,9 +1,14 @@
 import 'package:binance_task/app/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
+
+/// Loading indicator
 class LoadingIndicatorWidget extends StatelessWidget {
+  /// Show background overlay
   final bool needShowOverlay;
+  /// Loading indicator top padding
   final double? topMargin;
+  /// Default centered [MainAxisAlignment.center]
   final MainAxisAlignment mainAxisAlignment;
 
   const LoadingIndicatorWidget({

@@ -9,6 +9,7 @@ abstract class AppColors {
   static const Color red = Color(0xFFE44358);
   static const Color hint = Color(0xFF989EA7);
   static const Color text = Color(0xFFFFFFFF);
+  static const Color lightGray = Color(0xFF696E77);
   static const Color lightText = Color(0xFF7A7D83);
   static const Color searchbarBackground = Color(0xFF29303d);
   static const Color surfaceLightGray = Color(0xFFF7F8F9);
@@ -23,35 +24,35 @@ class AppTextStyle {
     fontFamily: "Barlow",
     color: AppColors.text,
     fontWeight: FontWeight.normal,
-    height: AppTextStyle.textHeight,
+    height: textHeight,
   );
   static const TextStyle body1 = TextStyle(
     fontSize: 16,
     fontFamily: "Barlow",
     color: AppColors.text,
     fontWeight: FontWeight.normal,
-    height: AppTextStyle.textHeight,
+    height: textHeight,
   );
   static const TextStyle body2 = TextStyle(
     fontSize: 15,
     fontFamily: "Barlow",
     color: AppColors.text,
     fontWeight: FontWeight.normal,
-    height: AppTextStyle.textHeight,
+    height: textHeight,
   );
   static const TextStyle title = TextStyle(
     fontSize: 22,
     fontFamily: "Barlow",
     color: AppColors.text,
     fontWeight: FontWeight.w600,
-    height: AppTextStyle.textHeight,
+    height: textHeight,
   );
   static const TextStyle title1 = TextStyle(
     fontSize: 18,
     fontFamily: "Barlow",
     color: AppColors.text,
     fontWeight: FontWeight.w600,
-    height: AppTextStyle.textHeight,
+    height: textHeight,
   );
 }
 
@@ -107,11 +108,17 @@ class AppTheme {
       border: border,
       enabledBorder: border,
       focusedBorder: border,
-      prefixIcon: const Icon(
-        Icons.search,
-        color: AppColors.gray,
+      prefixIconConstraints: const BoxConstraints(
+        maxHeight: 45,
       ),
-      contentPadding: const EdgeInsets.only(right: 16, top: 12, bottom: 12),
+      prefixIcon: IconButton(
+        onPressed: () {},
+        icon: const Icon(
+          Icons.search,
+          color: AppColors.lightGray,
+        ),
+      ),
+      contentPadding: EdgeInsets.zero,
     );
   }
 }

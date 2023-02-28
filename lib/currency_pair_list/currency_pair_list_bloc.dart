@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:binance_task/core/blocs/connectivity/connectivity_cubit.dart';
 import 'package:binance_task/core/blocs/websocket/websocket_bloc.dart';
 import 'package:binance_task/currency_pair_list/currency_pair_list_state.dart';
 import 'package:binance_task/currency_pair_list/entities/currency.dart';
@@ -12,14 +11,11 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 part 'currency_pair_list_event.dart';
 
+/// https://api4.binance.com/api/v3/ticker/24hr
+/// TODO: load all currencies before update websocket
 class CurrencyPairListBloc
     extends HydratedBloc<CurrencyPairEvent, CurrencyPairState> {
-  InternetConnectivityCubit internetConnectivityCubit;
-
-  late final WebSocketBloc websocketBloc = WebSocketBloc(
-    internetConnectivityCubit: internetConnectivityCubit,
-  );
-
+  final WebSocketBloc websocketBloc;
   late StreamSubscription websocketSubscription;
 
   List<CurrencyPair> allLoaded = [];
@@ -27,7 +23,7 @@ class CurrencyPairListBloc
   String searchString = "";
 
   CurrencyPairListBloc({
-    required this.internetConnectivityCubit,
+    required this.websocketBloc,
   }) : super(const CurrencyPairState()) {
     on<CurrencyPairInitEvent>(_init);
     on<CurrencyPairUpdatedEvent>(_onCurrencyUpdate);

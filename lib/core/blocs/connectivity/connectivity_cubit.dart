@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 
 part 'connectivity_state.dart';
 
-/// Internet connectivitiy cubit will track connection state.
+/// Internet connectivity cubit will track connection state.
 class InternetConnectivityCubit extends Cubit<InternetConnectivityState> {
   InternetConnectivityCubit()
       : super(
@@ -52,11 +52,9 @@ class InternetConnectivityCubit extends Cubit<InternetConnectivityState> {
 
   Future<bool> checkConnection() async {
     var connectivityResult = await Connectivity().checkConnectivity();
-    if (connectivityResult == ConnectivityResult.mobile ||
-        connectivityResult == ConnectivityResult.wifi) {
-      return true;
-    }
-    return false;
+    return connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi ||
+        connectivityResult == ConnectivityResult.vpn;
   }
 
   @override
